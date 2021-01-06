@@ -1,39 +1,73 @@
-import type { AWS } from '@serverless/typescript';
+import type {AWS} from '@serverless/typescript';
+import * as dotenv from 'dotenv'
+
+dotenv.config()
 
 const serverlessConfiguration: AWS = {
-  service: 'twitchpusher',
-  frameworkVersion: '2',
-  custom: {
-    webpack: {
-      webpackConfig: './webpack.config.js',
-      includeModules: true
-    }
-  },
-  // Add the serverless-webpack plugin
-  plugins: ['serverless-webpack'],
-  provider: {
-    name: 'aws',
-    runtime: 'nodejs12.x',
-    apiGateway: {
-      minimumCompressionSize: 1024,
+    service: 'twitchpusher',
+    useDotenv: true,
+    frameworkVersion: '2',
+    custom: {
+        webpack: {
+            webpackConfig: './webpack.config.js',
+            includeModules: true
+        },
+        customDomain: {
+            domainName: process.env.ENDPOINT_HOST,
+            basePath: '',
+        },
     },
-    environment: {
-      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+    plugins: ['serverless-webpack', 'serverless-domain-manager', 'serverless-dotenv-plugin'],
+    provider: {
+        name: 'aws',
+        runtime: 'nodejs12.x',
+        memorySize: 512,
+        stage: 'production',
+        region: 'eu-west-1',
+        lambdaHashingVersion: "20201221",
+        apiGateway: {
+            minimumCompressionSize: 512,
+            shouldStartNameWithService: true,
+        },
+        environment: {
+            AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+        },
     },
-  },
-  functions: {
-    hello: {
-      handler: 'handler.hello',
-      events: [
-        {
-          http: {
-            method: 'get',
-            path: 'hello',
-          }
+    functions: {
+        webhook: {
+            handler: 'handler.webhook',
+            events: [
+                {
+                    http: {
+                        method: 'post',
+                        path: 'webhook',
+                    }
+                }
+            ]
+        },
+        login: {
+            handler: 'handler.login',
+            events: [
+                {
+                    http: {
+                        method: 'get',
+                        path: 'login'
+                    }
+                }
+            ]
+        },
+        fallback: {
+            handler: 'handler.fallback',
+            events: [
+                {
+                    http: {
+                        method: 'get',
+                        path: '',
+                    }
+                }
+            ]
         }
-      ]
     }
-  }
 }
 
 module.exports = serverlessConfiguration;
