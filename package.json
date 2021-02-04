@@ -1,7 +1,7 @@
 {
   "name": "twitchpusher",
   "version": "0.0.2",
-  "description": "Serverless webpack example using Typescript",
+  "description": "Serverless Lambda functions triggered by Twitch Webhooks that will notify a Pusher client",
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -27,6 +27,6 @@
     "webpack": "^5.4.0",
     "webpack-node-externals": "^2.5.2"
   },
-  "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
+  "author": "Charaf Rezrazi",
   "license": "MIT"
 }
